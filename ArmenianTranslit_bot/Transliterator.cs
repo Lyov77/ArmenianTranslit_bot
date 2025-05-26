@@ -54,6 +54,17 @@ public static class Transliterator
         ["eq"] = ("եք", "ԵՔ")
     };
 
+    // Новые последовательности с приоритетом по длине
+    private static readonly Dictionary<string, (string lower, string upper)> SpecialSequences = new()
+    {
+        ["einq"] = ("էինք", "ԷԻՆՔ"),
+        ["eir"] = ("էիր", "ԷԻՐ"),
+        ["eiq"] = ("էիք", "ԷԻՔ"),
+        ["ein"] = ("էին", "ԷԻՆ"),
+        ["er"] = ("էր", "ԷՐ"),
+        ["ei"] = ("էի", "ԷԻ")
+    };
+
     public static string Transliterate(string input)
     {
         var words = Regex.Split(input, @"(\s+|[^a-zA-Z@]+)");
@@ -89,6 +100,25 @@ public static class Transliterator
         while (i < word.Length)
         {
             string sub = word[i..];
+
+            // Обработка новых последовательностей (er, ei, eir и т.д.) — в порядке убывания длины
+            foreach (var seq in SpecialSequences.OrderByDescending(k => k.Key.Length))
+            {
+                if (sub.StartsWith(seq.Key, StringComparison.OrdinalIgnoreCase))
+                {
+                    string original = word.Substring(i, seq.Key.Length);
+                    bool isUpper = original.All(char.IsUpper);
+                    bool isCapital = char.IsUpper(original[0]) && original.Skip(1).All(c => char.IsLower(c));
+
+                    string toAppend = isUpper ? seq.Value.upper :
+                                      isCapital ? ToTitleCase(seq.Value.lower) :
+                                      seq.Value.lower;
+
+                    result.Append(toAppend);
+                    i += seq.Key.Length;
+                    goto ContinueLoop;
+                }
+            }
 
             // --- ev: если есть заглавная — перевести как ԵՎ, иначе как և ---
             if (sub.Length >= 2 && sub[..2].Equals("ev", StringComparison.OrdinalIgnoreCase))
@@ -169,6 +199,9 @@ public static class Transliterator
             }
 
             i++;
+
+        ContinueLoop:
+            ;
         }
 
         return result.ToString();
