@@ -15,6 +15,7 @@ public class BotService
 
     public async Task HandleUpdateAsync(ITelegramBotClient bot, Update update, CancellationToken cancellationToken)
     {
+        Console.WriteLine("Got a message!");
         if (update.Type == UpdateType.CallbackQuery)
         {
             var lang = update.CallbackQuery.Data!;
