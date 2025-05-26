@@ -32,6 +32,6 @@ class Program
 
         var me = await botClient.GetMe();
         Console.WriteLine($"Start listening for @{me.Username}");
-        Console.ReadLine();
+        await Task.Delay(-1);
     }
 }
