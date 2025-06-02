@@ -71,17 +71,6 @@ public static class Transliterator
         ["ei"] = ("էի", "ԷԻ")
     };
 
-    // Новые последовательности с приоритетом по длине
-    private static readonly Dictionary<string, (string lower, string upper)> SpecialSequences = new()
-    {
-        ["einq"] = ("էինք", "ԷԻՆՔ"),
-        ["eir"] = ("էիր", "ԷԻՐ"),
-        ["eiq"] = ("էիք", "ԷԻՔ"),
-        ["ein"] = ("էին", "ԷԻՆ"),
-        ["er"] = ("էր", "ԷՐ"),
-        ["ei"] = ("էի", "ԷԻ")
-    };
-
     public static string Transliterate(string input)
     {
         var words = Regex.Split(input, @"(\s+|[^a-zA-Z@]+)");
@@ -119,7 +108,7 @@ public static class Transliterator
             string sub = word[i..];
 
             // Обработка новых последовательностей (er, ei, eir и т.д.) — в порядке убывания длины
-            foreach (var seq in SpecialSequences.OrderByDescending(k => k.Key.Length))
+            foreach (var seq in WholeWordMap.OrderByDescending(k => k.Key.Length))
             {
                 if (sub.StartsWith(seq.Key, StringComparison.OrdinalIgnoreCase))
                 {
