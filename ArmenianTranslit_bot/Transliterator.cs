@@ -20,7 +20,7 @@ public static class Transliterator
         ["b"] = ("բ", "Բ"),
         ["c"] = ("ց", "Ց"),
         ["d"] = ("դ", "Դ"),
-        ["e"] = ("ե", "Ե"),
+        ["e"] = ("է", "Է"), // Изменение для буквы "e"
         ["f"] = ("ֆ", "Ֆ"),
         ["g"] = ("գ", "Գ"),
         ["h"] = ("հ", "Հ"),
@@ -52,14 +52,26 @@ public static class Transliterator
         ["en"] = ("են", "ԵՆ"),
         ["enq"] = ("ենք", "ԵՆՔ"),
         ["eq"] = ("եք", "ԵՔ"),
+
+        // Новые исключения для слова "che"
+        ["che"] = ("չէ", "ՉԷ"),
         ["cheinq"] = ("չէինք", "ՉԷԻՆՔ"),
         ["cheir"] = ("չէիր", "ՉԷԻՐ"),
         ["cheiq"] = ("չէիք", "ՉԷԻՔ"),
         ["chein"] = ("չէին", "ՉԷԻՆ"),
         ["cher"] = ("չէր", "ՉԷՐ"),
-        ["chei"] = ("չէի", "ՉԷԻ")
+        ["chei"] = ("չէի", "ՉԷԻ"),
+
+        // Используемые последовательности с "e"
+        ["einq"] = ("էինք", "ԷԻՆՔ"),
+        ["eir"] = ("էիր", "ԷԻՐ"),
+        ["eiq"] = ("էիք", "ԷԻՔ"),
+        ["ein"] = ("էին", "ԷԻՆ"),
+        ["er"] = ("էր", "ԷՐ"),
+        ["ei"] = ("էի", "ԷԻ")
     };
 
+    // Новые последовательности с приоритетом по длине
     private static readonly Dictionary<string, (string lower, string upper)> SpecialSequences = new()
     {
         ["einq"] = ("էինք", "ԷԻՆՔ"),
@@ -94,7 +106,6 @@ public static class Transliterator
     {
         var lower = word.ToLowerInvariant();
 
-        // Проверяем на совпадения с целыми словами
         if (WholeWordMap.TryGetValue(lower, out var special))
         {
             return IsAllUpper(word) ? special.upper : special.lower;
@@ -174,44 +185,30 @@ public static class Transliterator
                 continue;
             }
 
-            // --- ch: если это отдельное слово перед e, перевести как "Չ" ---
-            if (sub.Length > 2 && sub.StartsWith("ch", StringComparison.OrdinalIgnoreCase))
-            {
-                var nextChars = sub.Substring(2).ToLower();
-                if (WholeWordMap.ContainsKey(nextChars) || SpecialSequences.ContainsKey(nextChars))
-                {
-                    result.Append("Չ");
-                    i += 2;
-                    continue;
-                }
-            }
-
-            // --- e: обрабатываем как правило для начала, середины и конца ---
+            // --- o: в начале слова → օ, иначе → ո ---
             char ch = word[i];
-            if (char.ToLowerInvariant(ch) == 'e')
+            if (char.ToLowerInvariant(ch) == 'o')
             {
-                // Проверяем, если e на начале слова
-                if (i == 0)
-                {
-                    result.Append(char.IsUpper(ch) ? "Է" : "է");
-                }
-                else
-                {
-                    // Если слово не в исключениях — заменяем на ե
-                    if (IsInSpecialWords(word))
-                    {
-                        result.Append(char.IsUpper(ch) ? "Է" : "է");
-                    }
-                    else
-                    {
-                        result.Append(char.IsUpper(ch) ? "Ե" : "ե");
-                    }
-                }
+                bool isStart = i == 0;
+                string target = isStart ? "օ" : "ո";
+                result.Append(char.IsUpper(ch) ? ToTitleCase(target) : target);
                 i++;
                 continue;
             }
 
-            // Простой случай замены буквы
+            // --- e: если в начале, то как "Է", иначе как "ե", кроме исключений ---
+            if (char.ToLowerInvariant(ch) == 'e')
+            {
+                bool isStart = i == 0;
+                string target = isStart && !IsInWholeWordExceptions(word)
+                    ? "Է" // Если "e" в начале и это не исключение
+                    : "ե"; // В других случаях "e" — это "ե"
+                result.Append(char.IsUpper(ch) ? ToTitleCase(target) : target);
+                i++;
+                continue;
+            }
+
+            // --- простая замена ---
             string key = ch.ToString().ToLowerInvariant();
             if (SimpleMap.TryGetValue(key, out var map))
             {
@@ -232,6 +229,18 @@ public static class Transliterator
     }
 
     private static bool IsAllUpper(string input) => input.All(char.IsUpper);
-    private static string ToTitleCase(string input) => char.ToUpperInvariant(input[0]) + input.Substring(1);
-    private static bool IsInSpecialWords(string word) => WholeWordMap.ContainsKey(word.ToLowerInvariant());
+
+    private static string ToTitleCase(string input)
+    {
+        if (string.IsNullOrEmpty(input)) return input;
+        if (input.Length == 1) return input.ToUpperInvariant();
+        return char.ToUpperInvariant(input[0]) + input[1..];
+    }
+
+    // Проверка, входит ли слово в список исключений для буквы "e"
+    private static bool IsInWholeWordExceptions(string word)
+    {
+        var exceptions = new HashSet<string>(WholeWordMap.Keys, StringComparer.OrdinalIgnoreCase);
+        return exceptions.Contains(word.ToLowerInvariant());
+    }
 }
