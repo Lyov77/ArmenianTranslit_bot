@@ -159,8 +159,14 @@ public static class Transliterator
             if (sub.StartsWith("ev", StringComparison.OrdinalIgnoreCase))
             {
                 string original = word.Substring(i, 2);
-                bool isCapital = IsAllUpper(original) || IsTitleCase(original);
-                result.Append(isCapital ? "Եվ" : "և");
+
+                if (IsAllUpper(original))
+                    result.Append("ԵՎ");
+                else if (IsTitleCase(original))
+                    result.Append("Եվ");
+                else
+                    result.Append("և");
+
                 i += 2;
                 continue;
             }
