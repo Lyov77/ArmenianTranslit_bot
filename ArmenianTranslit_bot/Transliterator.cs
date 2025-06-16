@@ -32,21 +32,21 @@ public static class Transliterator
     private static readonly Dictionary<string, (string lower, string upper)> SpecialCombinations = new(StringComparer.OrdinalIgnoreCase)
     {
 
-        // ' and ’ signs are different in iPhone and Android keyboards
+        // ' and ՛ signs are different in iPhone and Android keyboards
         ["p'"] = ("փ", "Փ"),
-        ["p’"] = ("փ", "Փ"),
+        ["p՛"] = ("փ", "Փ"),
 
         ["t'"] = ("թ", "Թ"),
-        ["t’"] = ("թ", "Թ"),
+        ["t՛"] = ("թ", "Թ"),
         
         ["ch'"] = ("ճ", "Ճ"),
-        ["ch’"] = ("ճ", "Ճ"),
+        ["ch՛"] = ("ճ", "Ճ"),
         
         ["c'"] = ("ծ", "Ծ"),
-        ["c’"] = ("ծ", "Ծ"),
+        ["c՛"] = ("ծ", "Ծ"),
         
         ["r'"] = ("ռ", "Ռ"),
-        ["r’"] = ("ռ", "Ռ"),
+        ["r՛"] = ("ռ", "Ռ"),
         
         ["yev"] = ("և", "ԵՎ"),
         ["zh"] = ("ժ", "Ժ"),
