@@ -27,44 +27,38 @@ public class BotService
                 "hy" =>
                     "Բարև, ես Telegram բոտ եմ, որը փոխակերպում է լատինատառ հայերենը՝ հայերեն այբուբենով։\n" +
                     "Օրինակ, ուղարկիր `barev`, ես կպատասխանեմ՝ `բարև`։\n\n" +
-                    "Հատուկ հնչյունների համար օգտագործիր՝\n\n" +
-                    "```\n" +
+                    "Հատուկ հնչյունների համար օգտագործիր՝\n" +
                     " R   → Ր      R'  → Ռ\n" +
                     " P   → Պ      P'  → Փ\n" +
                     " T   → Տ      T'  → Թ\n" +
                     " C   → Ց      C'  → Ծ\n" +
                     " Ch  → Չ      Ch' → Ճ\n" +
-                    " Dz  → Ձ      Gh' → Ղ\n" +
-                    " Zh  → Ժ      Sh  → Շ\n" +
-                    "```\n",
+                    " Dz  → Ձ      Gh  → Ղ\n" +
+                    " Zh  → Ժ      Sh  → Շ\n",
 
                 "ru" =>
                    "Привет! Я Telegram-бот, который превращает армянский текст, написанный латиницей, в армянский алфавит.\n" +
                     "Например, отправь: `barev`, я отвечу: `բարև`.\n\n" +
-                    "Используй следующие комбинации для специальных звуков:\n\n" +
-                    "```\n" +
+                    "Используй следующие комбинации для специальных звуков:\n" +
                     " R   → Ր      R'  → Ռ\n" +
                     " P   → Պ      P'  → Փ\n" +
                     " T   → Տ      T'  → Թ\n" +
                     " C   → Ց      C'  → Ծ\n" +
                     " Ch  → Չ      Ch' → Ճ\n" +
-                    " Dz  → Ձ      Gh → Ղ\n" +
-                    " Zh  → Ժ      Sh  → Շ\n" +
-                    "```\n",
+                    " Dz  → Ձ      Gh  → Ղ\n" +
+                    " Zh  → Ժ      Sh  → Շ\n",
 
                 "en" =>
                     "Hello! I'm a Telegram bot that converts Armenian written in Latin letters into the Armenian alphabet.\n" +
                     "For example, send: `barev` and I’ll reply: `բարև`.\n\n" +
-                    "To type special sounds, use:\n\n" +
-                    "```\n" +
+                    "To type special sounds, use:\n" +
                     " R   → Ր      R'  → Ռ\n" +
                     " P   → Պ      P'  → Փ\n" +
                     " T   → Տ      T'  → Թ\n" +
                     " C   → Ց      C'  → Ծ\n" +
                     " Ch  → Չ      Ch' → Ճ\n" +
-                    " Dz  → Ձ      Gh → Ղ\n" +
-                    " Zh  → Ժ      Sh  → Շ\n" +
-                    "```\n",
+                    " Dz  → Ձ      Gh  → Ղ\n" +
+                    " Zh  → Ժ      Sh  → Շ\n",
 
                 _ => "Language not recognized."
             };
