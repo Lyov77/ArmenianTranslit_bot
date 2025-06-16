@@ -206,11 +206,15 @@ public static class Transliterator
 
     private static bool IsTitleCase(string input)
     {
-        return !string.IsNullOrEmpty(input) &&
-               char.IsUpper(input[0]) &&
-               input.Skip(1).All(char.IsLower);
-    }
+        if (string.IsNullOrEmpty(input)) return false;
 
+        // Remove symbols before the check
+        string clean = new string(input.Where(char.IsLetter).ToArray());
+
+        return clean.Length > 0 &&
+               char.IsUpper(clean[0]) &&
+               clean.Skip(1).All(char.IsLower);
+    }
     private static string ToTitleCase(string input)
     {
         if (string.IsNullOrEmpty(input)) return input;
