@@ -5,7 +5,7 @@ public static class Transliterator
 {
     private static string NormalizeApostrophes(string input)
     {
-        // Replace all apostrophe-like symbols to standart ASCII apostrophe '
+        // Replace all apostrophe-like symbols with standard ASCII apostrophe '
         char[] apostrophes = { '’', '‘', '՚', '՛', 'ˈ' };
         foreach (var ch in apostrophes)
         {
@@ -13,7 +13,8 @@ public static class Transliterator
         }
         return input;
     }
-    // Library for words-exceptions
+
+    // Library for word exceptions
     private static readonly Dictionary<string, (string lower, string upper)> WordLibrary = new(StringComparer.OrdinalIgnoreCase)
     {
         ["em"] = ("եմ", "ԵՄ"),
@@ -21,9 +22,8 @@ public static class Transliterator
         ["enq"] = ("ենք", "ԵՆՔ"),
         ["eq"] = ("եք", "ԵՔ"),
         ["en"] = ("են", "ԵՆ"),
-        
+
         ["che"] = ("չէ", "ՉԷ"),
-     
         ["chei"] = ("չէի", "ՉԷԻ"),
         ["cheir"] = ("չէիր", "ՉԷԻՐ"),
         ["cher"] = ("չէր", "ՉԷՐ"),
@@ -36,12 +36,10 @@ public static class Transliterator
 
         ["incheve"] = ("ինչևէ", "ԻՆՉԵՎԷ"),
         ["voreve"] = ("որևէ", "ՈՐԵՎԷ")
-
     };
 
     private static readonly Dictionary<string, (string lower, string upper)> SpecialCombinations = new(StringComparer.OrdinalIgnoreCase)
     {
-
         ["p'"] = ("փ", "Փ"),
         ["t'"] = ("թ", "Թ"),
         ["ch'"] = ("ճ", "Ճ"),
@@ -112,10 +110,14 @@ public static class Transliterator
     {
         var lower = word.ToLowerInvariant();
 
-        // Check exceptions library
+        // Word exception handling
         if (WordLibrary.TryGetValue(lower, out var lib))
         {
-            return IsAllUpper(word) ? lib.upper : lib.lower;
+            if (IsAllUpper(word))
+                return lib.upper;
+            if (IsTitleCase(word))
+                return ToTitleCase(lib.lower);
+            return lib.lower;
         }
 
         var result = new StringBuilder();
@@ -125,7 +127,7 @@ public static class Transliterator
         {
             string sub = word[i..];
 
-            // Special Combinations
+            // Special combinations
             var match = SpecialCombinations
                 .OrderByDescending(kv => kv.Key.Length)
                 .FirstOrDefault(kv => sub.StartsWith(kv.Key, StringComparison.OrdinalIgnoreCase));
@@ -133,32 +135,37 @@ public static class Transliterator
             if (!string.IsNullOrEmpty(match.Key))
             {
                 string original = word.Substring(i, match.Key.Length);
-                result.Append(IsAllUpper(original) ? match.Value.upper : match.Value.lower);
+                if (IsAllUpper(original))
+                    result.Append(match.Value.upper);
+                else if (IsTitleCase(original))
+                    result.Append(ToTitleCase(match.Value.lower));
+                else
+                    result.Append(match.Value.lower);
+
                 i += match.Key.Length;
                 continue;
             }
 
-            // ev
+            // "ev" special case
             if (sub.StartsWith("ev", StringComparison.OrdinalIgnoreCase))
             {
                 string original = word.Substring(i, 2);
-                bool isCapital = original.Any(char.IsUpper);
+                bool isCapital = IsAllUpper(original) || IsTitleCase(original);
                 result.Append(isCapital ? "ԵՎ" : "և");
                 i += 2;
                 continue;
             }
 
-            // vo: as a first letter of the word → ո
+            // "vo" as word start
             if (i == 0 && sub.StartsWith("vo", StringComparison.OrdinalIgnoreCase))
             {
                 string original = word.Substring(i, 2);
-                result.Append(IsAllUpper(original) ? "Ո" : "ո");
+                result.Append(IsAllUpper(original) ? "Ո" : IsTitleCase(original) ? "Ո" : "ո");
                 i += 2;
                 continue;
             }
 
-
-            // o: as a first letter of the word → օ, else → ո
+            // "o" at beginning → օ, else → ո
             if (char.ToLowerInvariant(word[i]) == 'o')
             {
                 bool isStart = i == 0;
@@ -168,7 +175,7 @@ public static class Transliterator
                 continue;
             }
 
-            // e: as a first letter of the word → Է, else → е
+            // "e" at beginning → Է, else → ե
             if (char.ToLowerInvariant(word[i]) == 'e')
             {
                 bool isStart = i == 0;
@@ -178,7 +185,7 @@ public static class Transliterator
                 continue;
             }
 
-            // Simple Mapping
+            // Simple letter map
             string key = word[i].ToString().ToLowerInvariant();
             if (SimpleMap.TryGetValue(key, out var val))
             {
@@ -196,6 +203,13 @@ public static class Transliterator
     }
 
     private static bool IsAllUpper(string input) => input.All(char.IsUpper);
+
+    private static bool IsTitleCase(string input)
+    {
+        return !string.IsNullOrEmpty(input) &&
+               char.IsUpper(input[0]) &&
+               input.Skip(1).All(char.IsLower);
+    }
 
     private static string ToTitleCase(string input)
     {
