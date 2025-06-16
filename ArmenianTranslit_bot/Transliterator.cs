@@ -3,6 +3,16 @@ using System.Text.RegularExpressions;
 
 public static class Transliterator
 {
+    private static string NormalizeApostrophes(string input)
+    {
+        // Replace all apostrophe-like symbols to standart ASCII apostrophe '
+        char[] apostrophes = { '’', '‘', '՚', '՛', 'ˈ' };
+        foreach (var ch in apostrophes)
+        {
+            input = input.Replace(ch, '\'');
+        }
+        return input;
+    }
     // Library for words-exceptions
     private static readonly Dictionary<string, (string lower, string upper)> WordLibrary = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -32,22 +42,12 @@ public static class Transliterator
     private static readonly Dictionary<string, (string lower, string upper)> SpecialCombinations = new(StringComparer.OrdinalIgnoreCase)
     {
 
-        // ' and ՛ signs are different in iPhone and Android keyboards
         ["p'"] = ("փ", "Փ"),
-        ["p՛"] = ("փ", "Փ"),
-
         ["t'"] = ("թ", "Թ"),
-        ["t՛"] = ("թ", "Թ"),
-        
         ["ch'"] = ("ճ", "Ճ"),
-        ["ch՛"] = ("ճ", "Ճ"),
-        
         ["c'"] = ("ծ", "Ծ"),
-        ["c՛"] = ("ծ", "Ծ"),
-        
         ["r'"] = ("ռ", "Ռ"),
-        ["r՛"] = ("ռ", "Ռ"),
-        
+
         ["yev"] = ("և", "ԵՎ"),
         ["zh"] = ("ժ", "Ժ"),
         ["gh"] = ("ղ", "Ղ"),
@@ -88,6 +88,8 @@ public static class Transliterator
 
     public static string Transliterate(string input)
     {
+        input = NormalizeApostrophes(input);
+
         var words = Regex.Split(input, @"(\s+|[^a-zA-Z@']+)");
         var result = new StringBuilder();
 
