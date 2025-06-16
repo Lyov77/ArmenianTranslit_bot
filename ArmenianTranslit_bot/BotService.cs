@@ -24,11 +24,27 @@ public class BotService
 
             string welcome = lang switch
             {
-                "hy" => "Բարև, ես Telegram բոտ եմ, որը փոխակերպում է լատինատառ հայերենը՝ հայերեն այբուբենով։\nՕրինակ, ուղարկիր `barev`, ես կպատասխանեմ՝ `բարև`։",
-                "ru" => "Привет! Я Telegram-бот, который превращает армянский текст, написанный латиницей, в армянский алфавит.\nНапример, отправь: `barev`, я отвечу: `բարև`.",
-                "en" => "Hello! I'm a Telegram bot that converts Armenian written in Latin letters into the Armenian alphabet.\nFor example, send: `barev` and I’ll reply: `բարև`.",
+                "hy" =>
+                    "Բարև, ես Telegram բոտ եմ, որը փոխակերպում է լատինատառ հայերենը՝ հայերեն այբուբենով։\n" +
+                    "Օրինակ, ուղարկիր `barev`, ես կպատասխանեմ՝ `բարև`։\n\n" +
+                    "Հատուկ հնչյունների համար օգտագործիր՝\n" +
+                    "`p'` → փ, `t'` → թ, `ch'` → ճ, `c'` → ծ, `r'` → ռ։",
+
+                "ru" =>
+                    "Привет! Я Telegram-бот, который превращает армянский текст, написанный латиницей, в армянский алфавит.\n" +
+                    "Например, отправь: `barev`, я отвечу: `բարև`.\n\n" +
+                    "Для специальных звуков используй:\n" +
+                    "`p'` → փ, `t'` → թ, `ch'` → ճ, `c'` → ծ, `r'` → ռ։",
+
+                "en" =>
+                    "Hello! I'm a Telegram bot that converts Armenian written in Latin letters into the Armenian alphabet.\n" +
+                    "For example, send: `barev` and I’ll reply: `բարև`.\n\n" +
+                    "To type special sounds, use:\n" +
+                    "`p'` → փ, `t'` → թ, `ch'` → ճ, `c'` → ծ, `r'` → ռ։",
+
                 _ => "Language not recognized."
             };
+
 
             await bot.AnswerCallbackQuery(update.CallbackQuery.Id);
             await bot.SendMessage(update.CallbackQuery.Message.Chat.Id, welcome, cancellationToken: cancellationToken);
