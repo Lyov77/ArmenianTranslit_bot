@@ -146,12 +146,21 @@ public static class Transliterator
                 continue;
             }
 
+            // ye: as the first letters of the word → ե/Ե
+            if (i == 0 && sub.StartsWith("ye", StringComparison.OrdinalIgnoreCase))
+            {
+                string original = word.Substring(i, 2);
+                result.Append(IsAllUpper(original) ? "Ե" : IsTitleCase(original) ? "Ե" : "ե");
+                i += 2;
+                continue;
+            }
+
             // "ev" special case
             if (sub.StartsWith("ev", StringComparison.OrdinalIgnoreCase))
             {
                 string original = word.Substring(i, 2);
                 bool isCapital = IsAllUpper(original) || IsTitleCase(original);
-                result.Append(isCapital ? "ԵՎ" : "և");
+                result.Append(isCapital ? "Եվ" : "և");
                 i += 2;
                 continue;
             }
