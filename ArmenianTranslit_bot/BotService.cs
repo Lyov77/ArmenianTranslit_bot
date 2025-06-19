@@ -34,7 +34,8 @@ public class BotService
                     " C   → Ց      C'  → Ծ\n" +
                     " Ch  → Չ      Ch' → Ճ\n" +
                     " Dz  → Ձ      Gh  → Ղ\n" +
-                    " Zh  → Ժ      Sh  → Շ\n",
+                    " Zh  → Ժ      Sh  → Շ\n" +
+                    " @   → Ը      Y   → Յ\n",
 
                 "ru" =>
                    "Привет! Я Telegram-бот, который превращает армянский текст, написанный латиницей, в армянский алфавит.\n" +
@@ -46,7 +47,8 @@ public class BotService
                     " C   → Ց      C'  → Ծ\n" +
                     " Ch  → Չ      Ch' → Ճ\n" +
                     " Dz  → Ձ      Gh  → Ղ\n" +
-                    " Zh  → Ժ      Sh  → Շ\n",
+                    " Zh  → Ժ      Sh  → Շ\n" +
+                    " @   → Ը      Y   → Յ\n",
 
                 "en" =>
                     "Hello! I'm a Telegram bot that converts Armenian written in Latin letters into the Armenian alphabet.\n" +
@@ -58,7 +60,8 @@ public class BotService
                     " C   → Ց      C'  → Ծ\n" +
                     " Ch  → Չ      Ch' → Ճ\n" +
                     " Dz  → Ձ      Gh  → Ղ\n" +
-                    " Zh  → Ժ      Sh  → Շ\n",
+                    " Zh  → Ժ      Sh  → Շ\n" +
+                    " @   → Ը      Y   → Յ\n",
 
                 _ => "Language not recognized."
             };
